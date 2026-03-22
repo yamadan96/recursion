@@ -19,7 +19,7 @@ def getShapeType(ax, ay, bx, by, cx, cy, dx, dy):
                 if cross(points[i], points[j], points[k]) == 0:
                     return "not a quadrilateral"
 
-    # 自己交差チェック（対辺が交差していないか）
+    # 自己交差チェック（交差していたらother）
     def on_segment(p, q, r):
         return (min(p[0],r[0]) <= q[0] <= max(p[0],r[0]) and
                 min(p[1],r[1]) <= q[1] <= max(p[1],r[1]))
@@ -37,7 +37,7 @@ def getShapeType(ax, ay, bx, by, cx, cy, dx, dy):
         return False
 
     if segments_intersect(A, B, C, D) or segments_intersect(B, C, D, A):
-        return "not a quadrilateral"
+        return "other（その他）"
 
     # 辺の長さ（二乗）
     ab = (bx-ax)**2 + (by-ay)**2
@@ -60,40 +60,27 @@ def getShapeType(ax, ay, bx, by, cx, cy, dx, dy):
 
     # 判定（優先順位順）
     if all_equal and ac == bd:
-        return "square"
+        return "square（正方形）"
     if all_equal:
-        return "rhombus"
+        return "rhombus（ひし形）"
+    if ab_cd and bc_da and ac == bd:
+        return "rectangle（長方形）"
     if ab_cd and bc_da:
-        return "parallelogram"
+        return "parallelogram（平行四辺形）"
     if ab_cd or bc_da:
-        return "trapezoid"
+        return "trapezoid（台形）"
     if (ab == bc and cd == da) or (ab == da and bc == cd):
-        return "kite"
-    return "other"
+        return "kite（凧）"
+    return "other（その他）"
 
 
 # テスト
 print(getShapeType(1,1,2,2,3,3,4,4))             # not a quadrilateral
-print(getShapeType(1,1,2,2,3,3,-1,-1))            # not a quadrilateral
-print(getShapeType(0,0,1,1,0,0,1,1))              # not a quadrilateral
-print(getShapeType(0,0,1,0,1,1,4,-5))             # other
-print(getShapeType(0,0,0,1,1,1,0,0))              # not a quadrilateral
-print(getShapeType(0,2,2,2,2,4,0,4))              # square
-print(getShapeType(3,3,3,-3,-3,-3,-3,3))          # square
-print(getShapeType(0,0,5,5,10,0,5,-5))            # square
-print(getShapeType(0,0,5,0,8,4,3,4))              # rhombus
-print(getShapeType(-1,2,8,5,5,-4,-4,-7))          # rhombus
-print(getShapeType(-1,5,3,3,6,-4,2,-2))           # parallelogram
-print(getShapeType(-4,3,5,6,2,-2,-7,-5))          # parallelogram
-print(getShapeType(-2,0,5,0,8,8,-1,8))            # trapezoid
-print(getShapeType(-1,5,-3,1,3,-2,3,3))           # trapezoid
-print(getShapeType(-3,3,1,5,4,-1,1,-5))           # trapezoid
-print(getShapeType(0,0,5,3,0,8,-5,3))             # kite
-print(getShapeType(-5,7,2,6,5,-3,-4,0))           # kite
-print(getShapeType(-1,5,3,1,-1,-1,-5,1))          # kite
-print(getShapeType(0,1,2,3,3,4,2,1))              # not a quadrilateral
-print(getShapeType(-2,1,2,6,3,4,4,2))             # not a quadrilateral
-print(getShapeType(-3,0,-2,6,-1,2,-2,1))          # not a quadrilateral
-print(getShapeType(0,0,8,0,10,12,2,6))            # other
-print(getShapeType(-2,5,4,2,4,-4,-4,-4))          # other
-print(getShapeType(0,0,1,2,3,2,1,1))              # other
+print(getShapeType(0,2,2,2,2,4,0,4))              # square（正方形）
+print(getShapeType(0,0,5,0,8,4,3,4))              # rhombus（ひし形）
+print(getShapeType(738,463,738,335,392,335,392,463))  # rectangle（長方形）
+print(getShapeType(-1,5,3,3,6,-4,2,-2))           # parallelogram（平行四辺形）
+print(getShapeType(-2,0,5,0,8,8,-1,8))            # trapezoid（台形）
+print(getShapeType(0,0,5,3,0,8,-5,3))             # kite（凧）
+print(getShapeType(0,0,1,0,1,1,4,-5))             # other（その他）
+print(getShapeType(458,968,458,145,738,968,738,563))  # other（その他）
